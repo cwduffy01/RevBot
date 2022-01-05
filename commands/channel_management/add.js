@@ -114,7 +114,7 @@ module.exports = {
                 const sectionChannelName = subjectAcronym + "-" + courseNumber + "-" + sectionNumber;
                 const channelDescription = courseDict["courseName"] + ':\n' + courseDict["courseHours"] + '\n' + courseDict["courseDescription"];
                 const sectionTextChannel = await getChannel(sectionChannelName, "text", category, channelDescription);
-                await sectionTextChannel.updateOverwrite(message.author, {
+                await sectionTextChannel.permissionOverwrites.create(message.author, {
                     VIEW_CHANNEL: true
                 });
             }
@@ -122,7 +122,7 @@ module.exports = {
 
         // sort channels in categories with new channels
         for (category of [...new Set(categoriesToSort)]) {
-            let channels = category.children.filter(channel => channel.type === "text");
+            let channels = category.children.filter(channel => channel.type === "GUILD_TEXT");
             let channelNames = channels.map(channel => channel.name).sort();
             for ([key, channel] of channels) {  // sorts alphabetically
                 await channel.setPosition(channelNames.indexOf(channel.name));
@@ -131,10 +131,10 @@ module.exports = {
 
         // sorts categories if a new one was created
         if (sortCategories) {
-            let categories = message.guild.channels.cache.filter(channel => channel.type === "category" && 
+            let categories = message.guild.channels.cache.filter(channel => channel.type === "GUILD_CATEGORY" && 
                                                                             Object.keys(channelsDict).includes(channel.name));
             let categoryNames = categories.map(category => category.name).sort();
-            let unsortedCount = message.guild.channels.cache.filter(channel => channel.type === "category").size - categories.size;
+            let unsortedCount = message.guild.channels.cache.filter(channel => channel.type === "GUILD_CATEGORY").size - categories.size;
             for ([key, category] of categories) {   // sorts alphabetically
                 await category.setPosition(unsortedCount + categoryNames.indexOf(category.name));   // leaves non-subject categories at the top
             }
