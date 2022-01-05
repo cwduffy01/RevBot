@@ -103,12 +103,16 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#800000")
             .setTitle(`Your request was processed!`)
-            .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Reply to ${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
         if (invalidArgs.length > 0 || duplicateArgs.length > 0) {
             if (invalidArgs.length > 0) { reply.addField(name="Invalid Arguments:", value=invalidArgs.join(", "), inline=true); }
             if (duplicateArgs.length > 0) { reply.addField(name="Previously Added:", value=duplicateArgs.join(", "), inline=true); }
         }
-        message.channel.send(reply);
+        message.channel.send({ embeds: [reply] });
     },
 };

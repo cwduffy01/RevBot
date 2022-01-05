@@ -37,6 +37,6 @@ module.exports = {
         if (member.nickname) { reply.addField("Nickname:", member.nickname); }
         if (roles.length > 0) { reply.addField("Roles:", roles.join(", ")); }
 
-        logsChannel.send(reply);
+        logsChannel.send({ embeds: [reply] });
 	},
 };

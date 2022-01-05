@@ -10,7 +10,11 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#800000")
             .setTitle(`Commands:`)
-            .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Reply to ${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
 
         const commandFolders = fs.readdirSync('./commands');
@@ -51,7 +55,7 @@ module.exports = {
                 
                 reply.addField(prefix + command.name, description);
                 if (args.length > 0) {  // exits command if argument has been found
-                    message.channel.send(reply);
+                    message.channel.send({ embeds: [reply] });
                     return;
                 }
             }
@@ -65,7 +69,11 @@ module.exports = {
             const errorReply = new Discord.MessageEmbed()
                 .setColor("#800000")
                 .setTitle(`ERROR: You cannot use \`${args[0].toLowerCase()}\`, or it doesn't exist`)
-                .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+                .setAuthor(options = {
+                    name: `Reply to ${message.author.tag}`,
+                    iconURL: message.author.avatarURL(),
+                    url: message.url
+                })
                 .setTimestamp();
             message.channel.send(errorReply);
         }

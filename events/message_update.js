@@ -8,12 +8,16 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#FFFF00")
             .setTitle(`Message Edited in #${newMessage.channel.name}`)
-            .setAuthor(`Message by @${newMessage.author.tag}`, newMessage.author.avatarURL(), newMessage.url)
+            .setAuthor(options = {
+                name: `Message by @${newMessage.author.tag}`,
+                iconURL: newMessage.author.avatarURL(),
+                url: newMessage.url
+            })
             .setTimestamp();
 
         if (oldMessage.content) { reply.addField("Original:", oldMessage.content); }
         if (newMessage.content) { reply.addField("Edited:", newMessage.content); }
 
-        logsChannel.send(reply);
+        logsChannel.send({ embeds: [reply] });
 	},
 };

@@ -10,6 +10,6 @@ module.exports = {
             .setTitle(`@${user.tag} was Banned`)
             .setThumbnail(user.avatarURL())
             .setTimestamp();
-        logsChannel.send(reply);
+        logsChannel.send({ embeds: [reply] });
 	},
 };

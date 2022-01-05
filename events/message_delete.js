@@ -8,11 +8,15 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#FF0000")
             .setTitle(`Message Deleted in #${message.channel.name}`)
-            .setAuthor(`Message by @${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Message by @${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
 
         if (message.content) { reply.addField("Message:", message.content); }
 
-        logsChannel.send(reply);
+        logsChannel.send({ embeds: [reply] });
 	},
 };

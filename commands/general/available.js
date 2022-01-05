@@ -20,8 +20,12 @@ module.exports = {
             .setTitle(`You can add courses from the following subjects:`)
             .setDescription(subjectTitles.join('\n'))
             .addField("\u200b", "Tag a moderator to request additional subjects!")
-            .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Reply to ${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
-        message.channel.send(reply);
+        message.channel.send({ embeds: [reply] });
 	},
 };

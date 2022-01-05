@@ -32,6 +32,6 @@ module.exports = {
 
         if (accountAge) { reply.addField("Account Age:", accountAge); }
         
-        logsChannel.send(reply);
+        logsChannel.send({ embeds: [reply] });
 	},
 };

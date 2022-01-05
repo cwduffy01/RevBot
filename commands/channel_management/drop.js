@@ -44,21 +44,18 @@ module.exports = {
             const sectionNumber = group[2];
 
             // find category specified in argGroup
-            const categoryChannel = message.guild.channels.cache.find(channel => channel.type === "category" && 
+            const categoryChannel = message.guild.channels.cache.find(channel => channel.type === "GUILD_CATEGORY" && 
                                                                                  channel.name.includes(subjectAcronym.toUpperCase()));
 
             if (categoryChannel) {
                 var invalid = true;
-                const accessedChannels = categoryChannel.children.filter(channel => channel.permissionOverwrites.has(message.author.id));
+                const accessedChannels = categoryChannel.children.filter(channel => channel.permissionsFor(message.author).has("VIEW_CHANNEL"));
                 const courseChannelName = subjectAcronym + "-" + courseNumber;
                 // remove permissions from all channels specified in arguments
                 for ([key, channel] of categoryChannel.children) {
                     if (args[0].toLowerCase() === "all" || channel.name.includes(courseChannelName)) {
-                        let perm = channel.permissionOverwrites.find(perm => perm.id === message.author.id);
-                        if (!perm) { continue; }
-                        
+                        await channel.permissionOverwrites.delete(message.author);
                         invalid = false;
-                        await perm.delete();
                         accessedChannels.delete(channel.id);
                     }
                 }
@@ -66,11 +63,10 @@ module.exports = {
                     invalidArgs.push(...group);
                 }
 
-                const accessedTextChannels = accessedChannels.filter(channel => channel.type === "text");
+                const accessedTextChannels = accessedChannels.filter(channel => channel.type === "GUILD_TEXT");
                 if (accessedTextChannels.size === 0) {  // if user has access to 0 text channels in category
                     for ([key, channel] of accessedChannels) {  // remove access from voice channels as well
-                        let perm = channel.permissionOverwrites.find(perm => perm.id === message.author.id);
-                        perm.delete();
+                        await channel.permissionOverwrites.delete(message.author);
                     }
                 }
             }
@@ -82,11 +78,15 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#800000")
             .setTitle(`Courses have been removed from your sidebar!`)
-            .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Reply to ${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
         if (args[0].toLowerCase() !== "all" && invalidArgs.length > 0) { 
             reply.addField(name="Invalid Arguments:", value=invalidArgs.join(", "), inline=true); 
         }
-        message.channel.send(reply);
+        message.channel.send({ embeds: [reply] });
     }
 }

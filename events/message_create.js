@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 
 module.exports = {
-	name: 'message',
+	name: 'messageCreate',
 	execute(message, client) {
         if (message.content.startsWith(client.prefix) && !message.author.bot) {
             const args = message.content.slice(client.prefix.length).trim().split(/[\s-,]+/g);	// split string by space to get args
@@ -33,12 +33,16 @@ module.exports = {
                 const reply = new Discord.MessageEmbed()
                     .setColor("#800000")
                     .setTitle(`ERROR: No arguments were provided.`)
-                    .setAuthor(`Reply to ${message.author.tag}`, "https://i.imgur.com/17Av7vv.jpg", message.url)
+                    .setAuthor(options = {
+                        name: `Reply to ${message.author.tag}`,
+                        iconURL: message.author.avatarURL(),
+                        url: message.url
+                    })
                     .setTimestamp();
                 if (command.usage) {
                     reply.setDescription(`Arguments must take the form: \`${client.prefix}${command.name} ${command.usage}\``);
                 }
-                message.channel.send(reply);
+                message.channel.send({ embeds: [reply] });
                 return;
             }
     
@@ -49,9 +53,13 @@ module.exports = {
                 const reply = new Discord.MessageEmbed()
                     .setColor("#800000")
                     .setTitle(`ERROR: Sorry! I had trouble executing your command.`)
-                    .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+                    .setAuthor(options = {
+                        name: `Reply to ${message.author.tag}`,
+                        iconURL: message.author.avatarURL(),
+                        url: message.url
+                    })
                     .setTimestamp();
-                message.channel.send(reply);
+                message.channel.send({ embeds: [reply] });
             }
         }
 	},

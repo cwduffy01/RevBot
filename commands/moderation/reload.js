@@ -15,9 +15,13 @@ module.exports = {
 			const reply = new Discord.MessageEmbed()
 				.setColor("#800000")
 				.setTitle(`ERROR: There is no command with name or alias \`${commandName}\``)
-				.setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+				.setAuthor(options = {
+					name: `Reply to ${message.author.tag}`,
+					iconURL: message.author.avatarURL(),
+					url: message.url
+				})
 				.setTimestamp();
-			message.channel.send(reply);
+			message.channel.send({ embeds: [reply] });
 			return;
 		}
 
@@ -32,18 +36,26 @@ module.exports = {
 			const reply = new Discord.MessageEmbed()
 				.setColor("#800000")
 				.setTitle(`Command \`${newCommand.name}\` was reloaded!`)
-				.setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+				.setAuthor(options = {
+					name: `Reply to ${message.author.tag}`,
+					iconURL: message.author.avatarURL(),
+					url: message.url
+				})
 				.setTimestamp();
-			message.channel.send(reply);
+			message.channel.send({ embeds: [reply] });
 		} catch (error) {	// handles errors thrown by code
 			console.error(error);
 			const reply = new Discord.MessageEmbed()
 				.setColor("#800000")
 				.setTitle(`ERROR: I had trouble reloading that command!`)
 				.setDescription(`Command Name: \`${command.name}\`:\nError: \`${error.message}\``)
-				.setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+				.setAuthor(options = {
+					name: `Reply to ${message.author.tag}`,
+					iconURL: message.author.avatarURL(),
+					url: message.url
+				})
 				.setTimestamp();
-			message.channel.send(reply);
+			message.channel.send({ embeds: [reply] });
 		}
 	},
 };

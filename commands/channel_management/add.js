@@ -18,7 +18,7 @@ module.exports = {
         const getChannel = async (channelName, type, parent=undefined, description=undefined) => {
             var channel = message.guild.channels.cache.find(channel => channel.name === channelName);
             if (!channel) {     // create channel
-                channel = await message.guild.channels.create(channelName, { 
+                channel = await message.guild.channels.create(channelName, options={ 
                     type: type,
                     permissionOverwrites: [
                         {
@@ -35,14 +35,14 @@ module.exports = {
                 }
 
                 // updates dictionary to keep track of course channels
-                if (type === "category") {
+                if (type === "GUILD_CATEGORY") {
                     channelsDict[channelName] = {
                         "text": [],
                         "voice": []
                     }; 
                     sortCategories = true;
                 }
-                else if (type === "text") { channelsDict[parent.name]["text"].push(channelName); }
+                else if (type === "GUILD_TEXT") { channelsDict[parent.name]["text"].push(channelName); }
                 else { channelsDict[parent.name]["voice"].push(channelName); }
             }
             return channel;
@@ -92,19 +92,19 @@ module.exports = {
             const courseChannelName = subjectAcronym + "-" + courseNumber;
 
             // gets all channels
-            const category = await getChannel(categoryName, "category");
-            const vc1 = await getChannel(vc1Name, "voice", category);
-            const vc2 = await getChannel(vc2Name, "voice", category);
-            const courseTextChannel = await getChannel(courseChannelName, "text", category);
+            const category = await getChannel(categoryName, "GUILD_CATEGORY");
+            const vc1 = await getChannel(vc1Name, "GUILD_VOICE", category);
+            const vc2 = await getChannel(vc2Name, "GUILD_VOICE", category);
+            const courseTextChannel = await getChannel(courseChannelName, "GUILD_TEXT", category);
 
             // updates channel permissions for user
-            await vc1.updateOverwrite(message.author, {
+            await vc1.permissionOverwrites.create(message.author, {
                 VIEW_CHANNEL: true
             });
-            await vc2.updateOverwrite(message.author, {
+            await vc2.permissionOverwrites.create(message.author, {
                 VIEW_CHANNEL: true
             });
-            await courseTextChannel.updateOverwrite(message.author, {
+            await courseTextChannel.permissionOverwrites.create(message.author, {
                 VIEW_CHANNEL: true
             });
 
@@ -148,10 +148,15 @@ module.exports = {
         const reply = new Discord.MessageEmbed()
             .setColor("#800000")
             .setTitle(`Courses have been added to your sidebar!`)
-            .setAuthor(`Reply to ${message.author.tag}`, message.author.avatarURL(), message.url)
+            .setAuthor(options = {
+                name: `Reply to ${message.author.tag}`,
+                iconURL: message.author.avatarURL(),
+                url: message.url
+            })
             .setTimestamp();
         if (invalidArgs.length > 0) { reply.addField(name="Invalid Arguments:", value=invalidArgs.join(", "), inline=true); }
         
-        message.channel.send(reply);
+        
+        message.channel.send({ embeds: [reply] });
     }
 }
