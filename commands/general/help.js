@@ -48,7 +48,7 @@ module.exports = {
 
                     if (args.length > 0) {  // sends restrcied command info to user via dm
                         reply.addField(prefix + command.name, description);
-                        message.author.send(reply);
+                        message.author.send({ embeds: [reply] });
                         return;
                     }
                 }
@@ -63,7 +63,7 @@ module.exports = {
 
         if (reply.fields.length > 0) {  // sends sorted list to user via dm
             reply.fields.sort((a, b) => (a.name > b.name) ? 1 : -1);
-            message.author.send(reply);
+            message.author.send({ embeds: [reply] });
         }
         else {  // handles commands that don't exist/cannot be used
             const errorReply = new Discord.MessageEmbed()
@@ -75,7 +75,7 @@ module.exports = {
                     url: message.url
                 })
                 .setTimestamp();
-            message.channel.send(errorReply);
+            message.channel.send({ embeds: [errorReply] });
         }
 	},
 };
